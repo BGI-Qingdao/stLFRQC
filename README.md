@@ -9,14 +9,15 @@ Usage :
 quality control of stLFR reads.
 
 Options  :
-        -h/--help     print usage
-        --bwa         bwa
-        --samtools    samtools
-        --python3     python3 from anaconda
-        --ref         reference
-        --read1       read1
-        --read2       read2
-        --cpu         thread for bwa & samtools
+        -h/--help         print usage
+        --bwa             bwa
+        --samtools        samtools
+        --python3         python3 from anaconda
+        --ref             reference
+        --read1           read1
+        --read2           read2
+        --gap_threshold   max gap distance to treat as same lfr
+        --cpu             thread for bwa & samtools
 
 Example  :
 
