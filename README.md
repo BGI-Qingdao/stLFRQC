@@ -39,7 +39,7 @@ Example  :
 
 **all in 10.report.tar.gz**
 
-current it contains :
+currently it contains :
 ```
 02.ngs.basic.txt
 02.ngs.indel.txt
@@ -50,3 +50,5 @@ current it contains :
 06.lfr_per_barcode.txt
 06.lfr_readpair.txt
 ```
+
+Enjoy !
