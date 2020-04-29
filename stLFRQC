@@ -14,7 +14,27 @@ CPU=8
 GAP_THRESHOLD=300000
 
 function usage() {
-    echo "Usage : stLFRQC "
+    echo "Usage : "
+    echo "     ./stLFRQC [OPTION]" 
+    echo ""
+    echo "quality control of stLFR reads."
+    echo ""
+    echo "Options  :"
+    echo "        -h/--help     print usage"
+    echo "        --bwa         bwa"
+    echo "        --samtools    samtools"
+    echo "        --python3     python3 from anaconda"
+    echo "        --ref         reference"
+    echo "        --read1       read1"
+    echo "        --read2       read2"
+    echo "        --cpu         thread for bwa & samtools" 
+    echo ""
+    echo "Example  :"
+    echo ""
+    echo " ./stLFRQC --ref ref.fa --read1 r1.fq.gz --read2 r2.fq.gz \\"
+    echo "           --bwa /path/to/bwa --samtools /path/to/samtools \\"
+    echo "           --python3 /path/to/python3 "
+    echo ""
 }
 
 if [[ $# == 0 ]] ; then 
@@ -121,6 +141,7 @@ function try_mkdir(){
 # sanity check configures.
 check_file_exist "bwa binary file" $BWA
 check_file_exist "samtools binary file" $SAMTOOLS
+check_file_exist "python3 file" $PYTHON3
 check_file_exist "reference fasta file" $REF
 check_file_exist "stLFR read1 fasta file" $READ1
 check_file_exist "stLFR read2 fasta file" $READ2
