@@ -88,6 +88,28 @@ function check_file_exist() {
     fi
 }
 
+function check_self_exist() {
+    file_description=$1
+    file_name=$2
+    if [[ ! -e $file_name ]] ; then
+        echo "$file_description : [ $file_name ] is not exist ! "
+        echo "please re-download a new copy from github !"
+        echo "exit now ...!!!"
+        exit 1
+    fi
+}
+
+function check_selfbinary_exist() {
+    file_description=$1
+    file_name=$2
+    if [[ ! -e $file_name ]] ; then
+        echo "$file_description : [ $file_name ] is not exist ! "
+        echo "please run make command first !"
+        echo "exit now ...!!!"
+        exit 1
+    fi
+}
+
 function try_mkdir(){
     if [[ ! -d $1 ]] ; then
         mkdir $1
@@ -109,6 +131,22 @@ if [[ $version < 1.9 ]] ; then
 else
     echo "INFO : found samtools version = $version ;"
 fi
+
+INSTALL_DIR=`dirname $0`
+EAWK=$INSTALL_DIR"/extraction_barcode_infos.awk"
+DEPTH_PY=$INSTALL_DIR"/depth.py"
+LFR_PY=$INSTALL_DIR"/lfr.py"
+LFR_PER_BARCODE=$INSTALL_DIR"/lfr_per_barcode_53"
+LFR_LENGTH=$INSTALL_DIR"/lfr_length_53"
+LFR_READPAIR=$INSTALL_DIR"/lfr_readpair_53"
+
+check_self_exist "extraction_barcode_infos.awk" $EAWK
+check_self_exist "depth.py" $DEPTH_PY
+check_self_exist "lfr.py" $LFR_PY
+
+check_selfbinary_exist "lfr_per_barcode" $LFR_PER_BARCODE
+check_selfbinary_exist "lfr_length" $LFR_LENGTH
+check_selfbinary_exist "lfr_readpair" $LFR_READPAIR
 
 echo "INFO : stage 0 mapping "
 # step 00 : mapping reads into reference by "bwa mem"
@@ -171,7 +209,7 @@ $SAMTOOLS depth -a $TEMP_PREFIX".01.fixmate.sort.markdup.sam" \
             | awk '{tB[$3]=tB[$3]+1} END{for(k in tB){print k,tB[k];}}' \
             | sort -n > "03.depth.txt"  || exit 1
 echo "INFO : --> run samtools depth done."
-$PYTHON3  depth.py >"03.depth_detail.txt"
+$PYTHON3  $DEPTH_PY >"03.depth_detail.txt"
 echo ""
 echo "INFO : stage 1 ngs analysising done."
 
@@ -181,21 +219,21 @@ echo "INFO : stage 2 LFR analysising ....."
 # output format : read_name	barcode_name	ref_name	map_pos
 echo "INFO : --> get read_barcode.pos ..."
 grep -v '^@' $TEMP_PREFIX".01.fixmate.sort.markdup.sam" | \
-    awk -F '#|\t' -f extraction_barcode_infos.awk >$TEMP_PREFIX".04.read_barcode.pos"
+    awk -F '#|\t' -f $EAWK >$TEMP_PREFIX".04.read_barcode.pos"
 echo "INFO : --> get read_barcode.pos done."
 #step 05 : run lfr analysising ...
 echo "INFO : --> detect & print lfr infomation ..."
-$PYTHON3 lfr.py -i $TEMP_PREFIX".04.read_barcode.pos" -b $GAP_THRESHOLD
+$PYTHON3 $LFR_PY -i $TEMP_PREFIX".04.read_barcode.pos" -b $GAP_THRESHOLD
 echo "INFO : --> detect & print lfr infomation done"
 #step 06 : extract lfr features ...
 echo "INFO : --> run lfr_per_barcode_53 ..."
-./lfr_per_barcode_53 < "05.long_fragment.details.txt" >"06.lfr_per_barcode.txt"
+$LFR_PER_BARCODE < "05.long_fragment.details.txt" >"06.lfr_per_barcode.txt"
 echo "INFO : --> run lfr_per_barcode_53 done."
 echo "INFO : --> run lfr_length_53 ..."
-./lfr_length_53      < "05.long_fragment.details.txt" >"06.lfr_length.txt"
+$LFR_LENGTH      < "05.long_fragment.details.txt" >"06.lfr_length.txt"
 echo "INFO : --> run lfr_length_53 done."
 echo "INFO : --> run lfr_readpair_53 ..."
-./lfr_readpair_53    < "05.long_fragment.details.txt" >"06.lfr_readpair.txt"
+$LFR_READPAIR    < "05.long_fragment.details.txt" >"06.lfr_readpair.txt"
 echo "INFO : --> run lfr_readpair_53 done"
 echo ""
 echo "INFO : stage 2 LFR analysising done."
