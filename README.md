@@ -1,5 +1,13 @@
 # stLFR QC
 
+## Install
+
+```
+git clone https://github.com/BGI-Qingdao/stLFRQC.git
+cd stLFRQC
+make 
+```
+
 ## Uasge
 
 ```
