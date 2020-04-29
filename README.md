@@ -1,4 +1,6 @@
+# stLFR QC
 
+## Uasge
 
 ```
 Usage :
@@ -22,4 +24,20 @@ Example  :
            --bwa /path/to/bwa --samtools /path/to/samtools \
            --python3 /path/to/python3
 
+```
+
+## Output
+
+**all in 10.report.tar.gz**
+
+current it contains :
+```
+02.ngs.basic.txt
+02.ngs.indel.txt
+03.cumulative_depth_freq.png
+03.depth_detail.txt
+03.depth_freq.png
+06.lfr_length.txt
+06.lfr_per_barcode.txt
+06.lfr_readpair.txt
 ```
