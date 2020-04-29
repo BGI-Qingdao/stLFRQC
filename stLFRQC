@@ -202,6 +202,7 @@ echo "INFO : --> print NGS basic done"
 
 echo "INFO : --> print indel now ..."
 printf "length\tinsert_count\tdelete_count\n" >"02.ngs.indel.txt"
+grep ^ID 02.sam.stats | awk '{print $2,$3,$4}' >>"02.ngs.indel.txt"
 echo "INFO : --> print indel done."
 echo "INFO : --> run samtools depth now ..."
 # step 03 : calculate & draw depth infomation
@@ -227,13 +228,13 @@ $PYTHON3 $LFR_PY -i $TEMP_PREFIX".04.read_barcode.pos" -b $GAP_THRESHOLD
 echo "INFO : --> detect & print lfr infomation done"
 #step 06 : extract lfr features ...
 echo "INFO : --> run lfr_per_barcode_53 ..."
-$LFR_PER_BARCODE < "05.long_fragment.details.txt" >"06.lfr_per_barcode.txt"
+$LFR_PER_BARCODE < "05.long_fragment.details.txt" 2>"06.lfr_per_barcode.txt"
 echo "INFO : --> run lfr_per_barcode_53 done."
 echo "INFO : --> run lfr_length_53 ..."
-$LFR_LENGTH      < "05.long_fragment.details.txt" >"06.lfr_length.txt"
+$LFR_LENGTH      < "05.long_fragment.details.txt" 2>"06.lfr_length.txt"
 echo "INFO : --> run lfr_length_53 done."
 echo "INFO : --> run lfr_readpair_53 ..."
-$LFR_READPAIR    < "05.long_fragment.details.txt" >"06.lfr_readpair.txt"
+$LFR_READPAIR    < "05.long_fragment.details.txt" 2>"06.lfr_readpair.txt"
 echo "INFO : --> run lfr_readpair_53 done"
 echo ""
 echo "INFO : stage 2 LFR analysising done."
@@ -242,8 +243,9 @@ echo "INFO : stage 3 pack reports ..."
 tar -czf 10.report.tar.gz "02.ngs.basic.txt" \
                           "02.ngs.indel.txt" \
                           "03.depth_detail.txt" \
+                          "03.cumulative_depth_freq.png" \
                           "03.depth_freq.png" \
-                          "03.depth_freq.png"
+                          "03.depth_freq.png" \
                           "06.lfr_per_barcode.txt" \
                           "06.lfr_length.txt" \
                           "06.lfr_readpair.txt" \
