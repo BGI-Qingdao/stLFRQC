@@ -1,4 +1,4 @@
-all: lfr_per_barcode_53 lfr_length_53 lfr_readpair_53
+all: lfr_per_barcode_53 lfr_length_53 lfr_readpair_53 lfr_highquality_53
 
 
 lfr_per_barcode_53: lfr_per_barcode_53.cpp
@@ -10,5 +10,8 @@ lfr_length_53: lfr_length_53.cpp
 lfr_readpair_53: lfr_readpair_53.cpp
 	g++ -std=c++11 -g lfr_readpair_53.cpp -o lfr_readpair_53
 
+lfr_highquality_53: lfr_highquality_53.cpp
+	g++ -std=c++11 -g lfr_highquality_53.cpp -o lfr_highquality_53
+
 clean:
-	rm -rf lfr_per_barcode_53 lfr_length_53 lfr_readpair_53
+	rm -rf lfr_per_barcode_53 lfr_length_53 lfr_readpair_53 lfr_highquality_53
