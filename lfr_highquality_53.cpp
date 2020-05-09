@@ -29,7 +29,7 @@ int main(int argc , char ** argv)
         {"help",  no_argument,       NULL, 'h'},
         {0, 0, 0, 0}
     };
-    static char optstring[] = "l:b:h";
+    static char optstring[] = "l:b:g:m:h";
     int valid_lfr_readpair = 3;
     int valid_barcode_readpair = 5 ;
     int good_lfr_readpair = 5 ;
