@@ -14,6 +14,9 @@ CPU=8
 GAP_THRESHOLD=300000
 VALID_LFR=3
 VALID_BARCODE=5
+GOOD_LFR=5
+GOOD_LFR_L=10000
+
 function usage() {
 echo """
 Usage :
@@ -37,6 +40,10 @@ Options  :
                           default 3
         --valid_barcod_rp min valid barcode read pair 
                           default 5
+        --good_lfr_rp     min good lfr read pair 
+                          default 5
+        --good_lfr_ln     min good lfr length
+                          default 10000
 Example  :
 
  ./stLFRQC --ref ref.fa --read1 r1.fq.gz --read2 r2.fq.gz \\
@@ -91,6 +98,14 @@ do
             ;;
         "--valid_lfr_rp")
             VALID_LFR=$2
+            shift
+            ;;
+        "--good_lfr_rp")
+            GOOD_LFR=$2
+            shift
+            ;;
+        "--good_lfr_ln")
+            GOOD_LFR_L=$2
             shift
             ;;
         "--valid_barcode_rp")
@@ -176,6 +191,7 @@ LFR_PY=$INSTALL_DIR"/lfr.py"
 LFR_PER_BARCODE=$INSTALL_DIR"/lfr_per_barcode_53"
 LFR_LENGTH=$INSTALL_DIR"/lfr_length_53"
 LFR_READPAIR=$INSTALL_DIR"/lfr_readpair_53"
+LFR_GOOD=$INSTALL_DIR"/lfr_highquality_53"
 
 check_self_exist "extraction_barcode_infos.awk" $EAWK
 check_self_exist "depth.py" $DEPTH_PY
@@ -184,6 +200,7 @@ check_self_exist "lfr.py" $LFR_PY
 check_selfbinary_exist "lfr_per_barcode" $LFR_PER_BARCODE
 check_selfbinary_exist "lfr_length" $LFR_LENGTH
 check_selfbinary_exist "lfr_readpair" $LFR_READPAIR
+check_selfbinary_exist "lfr_highquality" $LFR_GOOD
 
 echo "INFO : stage 0 mapping "
 # step 00 : mapping reads into reference by "bwa mem"
@@ -273,6 +290,9 @@ echo "INFO : --> run lfr_length_53 done."
 echo "INFO : --> run lfr_readpair_53 ..."
 $LFR_READPAIR   -l $VALID_LFR -b $VALID_BARCODE < "05.long_fragment.details.txt" 2>"06.lfr_readpair.txt"
 echo "INFO : --> run lfr_readpair_53 done"
+echo "INFO : --> run lfr_highquality_53 ..."
+$LFR_GOOD   -l $VALID_LFR -b $VALID_BARCODE -g $GOOD_LFR -m $GOOD_LFR_L  < "05.long_fragment.details.txt" 2>"06.lfr_highquality.txt"
+echo "INFO : --> run lfr_highquality_53 done"
 echo ""
 echo "INFO : stage 2 LFR analysising done."
 
@@ -286,6 +306,7 @@ tar -czf 10.report.tar.gz "02.ngs.basic.txt" \
                           "06.lfr_per_barcode.txt" \
                           "06.lfr_length.txt" \
                           "06.lfr_readpair.txt" \
+                          "06.lfr_highquality.txt" \
 
 echo "INFO : stage 3 pack reports done."
 echo "INFO : final report : \"10.report.tar.gz\""
