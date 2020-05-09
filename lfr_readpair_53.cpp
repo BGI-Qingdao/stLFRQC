@@ -65,10 +65,10 @@ int main()
     std::sort(readpair_cache.begin(),readpair_cache.end());
     long long sum = 0;
     for( long long x : readpair_cache) sum += x ;
-    std::cerr<<"Average-lfr-length\t"<<sum/readpair_cache.size()<<std::endl;
-    std::cerr<<"Min-lfr-length\t"<<readpair_cache.at(0)<<std::endl;
-    std::cerr<<"Max-lfr-length\t"<<readpair_cache.at(readpair_cache.size()-1)<<std::endl;
-    std::cerr<<"Median-lfr-length\t"<<readpair_cache.at(readpair_cache.size()/2)<<std::endl;
+    std::cerr<<"Average-lfr-readpair\t"<<sum/readpair_cache.size()<<std::endl;
+    std::cerr<<"Min-lfr-readpair\t"<<readpair_cache.at(0)<<std::endl;
+    std::cerr<<"Max-lfr-readpair\t"<<readpair_cache.at(readpair_cache.size()-1)<<std::endl;
+    std::cerr<<"Median-lfr-readpair\t"<<readpair_cache.at(readpair_cache.size()/2)<<std::endl;
     std::cerr<<"LFR-readpair\tcount\n";
     for(const std::pair<long,long> & p : lfr_readpair_freq){
         std::cerr<<p.first<<"\t"<<p.second<<"\n";
