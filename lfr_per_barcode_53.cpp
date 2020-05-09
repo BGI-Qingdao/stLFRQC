@@ -3,7 +3,14 @@
 #include <getopt.h>
 
 void printUsage(){
-
+    std::cerr<<"Usage :\n";
+    std::cerr<<"     lfr_per_barcode_53 [options] < long_fragment.details.txt\n\n";
+    std::cerr<<"Options :\n"
+             <<"     -h/--help                      print this usage.\n"
+             <<"     -l/--valid_lfr_readpair        min valid lfr read pair threshold.\n"
+             <<"                                        default 3.\n"
+             <<"     -b/--valid_barcode_readpair    min valid lfr read pair threshold.\n"
+             <<"                                        default 5.\n";
 }
 
 int main(int argc , char ** argv)

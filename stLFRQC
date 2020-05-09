@@ -12,30 +12,37 @@ READ2=
 TEMP_PREFIX="temp"
 CPU=8
 GAP_THRESHOLD=300000
-
+VALID_LFR=3
+VALID_BARCODE=5
 function usage() {
-    echo "Usage : "
-    echo "     ./stLFRQC [OPTION]" 
-    echo ""
-    echo "quality control of stLFR reads."
-    echo ""
-    echo "Options  :"
-    echo "        -h/--help         print usage"
-    echo "        --bwa             bwa"
-    echo "        --samtools        samtools"
-    echo "        --python3         python3 from anaconda"
-    echo "        --ref             reference"
-    echo "        --read1           read1"
-    echo "        --read2           read2"
-    echo "        --gap_threshold   max gap distance to treat as same lfr"
-    echo "        --cpu             thread for bwa & samtools"
-    echo ""
-    echo "Example  :"
-    echo ""
-    echo " ./stLFRQC --ref ref.fa --read1 r1.fq.gz --read2 r2.fq.gz \\"
-    echo "           --bwa /path/to/bwa --samtools /path/to/samtools \\"
-    echo "           --python3 /path/to/python3 "
-    echo ""
+echo """
+Usage :
+     ./stLFRQC [OPTION] 
+
+quality control of stLFR reads.
+
+Options  :
+        -h/--help         print usage
+        --bwa             bwa
+        --samtools        samtools
+        --python3         python3 from anaconda
+        --ref             reference
+        --read1           read1
+        --read2           read2
+        --gap_threshold   max gap distance to treat as same lfr
+                          default 3000,000
+        --cpu             thread for bwa & samtools
+                          default 8
+        --valid_lfr_rp    min valid lfr read pair 
+                          default 3
+        --valid_barcod_rp min valid barcode read pair 
+                          default 5
+Example  :
+
+ ./stLFRQC --ref ref.fa --read1 r1.fq.gz --read2 r2.fq.gz \\
+           --bwa /path/to/bwa --samtools /path/to/samtools \\
+           --python3 /path/to/python3
+"""
 }
 
 if [[ $# == 0 ]] ; then 
@@ -80,6 +87,14 @@ do
             ;;
         "--ref")
             REF=$2
+            shift
+            ;;
+        "--valid_lfr_rp")
+            VALID_LFR=$2
+            shift
+            ;;
+        "--valid_barcode_rp")
+            VALID_BARCODE=$2
             shift
             ;;
         "--read1")
@@ -250,13 +265,13 @@ $PYTHON3 $LFR_PY -i $TEMP_PREFIX".04.read_barcode.pos" -b $GAP_THRESHOLD
 echo "INFO : --> detect & print lfr infomation done"
 #step 06 : extract lfr features ...
 echo "INFO : --> run lfr_per_barcode_53 ..."
-$LFR_PER_BARCODE < "05.long_fragment.details.txt" 2>"06.lfr_per_barcode.txt"
+$LFR_PER_BARCODE -l $VALID_LFR -b $VALID_BARCODE < "05.long_fragment.details.txt" 2>"06.lfr_per_barcode.txt"
 echo "INFO : --> run lfr_per_barcode_53 done."
 echo "INFO : --> run lfr_length_53 ..."
-$LFR_LENGTH      < "05.long_fragment.details.txt" 2>"06.lfr_length.txt"
+$LFR_LENGTH    -l $VALID_LFR -b $VALID_BARCODE  < "05.long_fragment.details.txt" 2>"06.lfr_length.txt"
 echo "INFO : --> run lfr_length_53 done."
 echo "INFO : --> run lfr_readpair_53 ..."
-$LFR_READPAIR    < "05.long_fragment.details.txt" 2>"06.lfr_readpair.txt"
+$LFR_READPAIR   -l $VALID_LFR -b $VALID_BARCODE < "05.long_fragment.details.txt" 2>"06.lfr_readpair.txt"
 echo "INFO : --> run lfr_readpair_53 done"
 echo ""
 echo "INFO : stage 2 LFR analysising done."
