@@ -94,7 +94,7 @@ int main(int argc , char ** argv)
             l += lc;
             b += v ;
             ul += uc ;
-            if ( b>=valid_barcode_readpair ) {
+            if ( br >=valid_barcode_readpair ) {
                 b5 ++ ;
                 bm5 +=v ;
                 l5 +=lc;
@@ -145,14 +145,16 @@ int main(int argc , char ** argv)
             std::cerr<<"(valid_lfr/valid_barcode)\t"
                 <<float(li)/float(bmi)<<std::endl;
         }
-        std::cerr<<"filter-barcode-read-pair<"<<valid_barcode_readpair<<"\t---------"<<std::endl;
-        std::cerr<<"total_barcode\t"<<b5<<std::endl;
-        std::cerr<<"uncertain_barcode\t"<<b5-bm5<<std::endl;
-        std::cerr<<"valid_barcode\t"<<bm5<<std::endl;
-        std::cerr<<"valid_lfr\t"<<l5<<std::endl;
-        std::cerr<<"uncertain_lfr\t"<<ul5<<std::endl;
-        std::cerr<<"(valid_lfr/valid_barcode)\t"
-                                     <<float(l5)/float(bm5)<<std::endl;
+        if ( valid_barcode_readpair > 2 ) {
+            std::cerr<<"filter-barcode-read-pair<"<<valid_barcode_readpair<<"\t---------"<<std::endl;
+            std::cerr<<"total_barcode\t"<<b5<<std::endl;
+            std::cerr<<"uncertain_barcode\t"<<b5-bm5<<std::endl;
+            std::cerr<<"valid_barcode\t"<<bm5<<std::endl;
+            std::cerr<<"valid_lfr\t"<<l5<<std::endl;
+            std::cerr<<"uncertain_lfr\t"<<ul5<<std::endl;
+            std::cerr<<"(valid_lfr/valid_barcode)\t"
+                <<float(l5)/float(bm5)<<std::endl;
+        }
         if( i == 1 ){
             std::cerr<<"total_barcode(if-1<barcode-read-pair<)"<<valid_barcode_readpair<<"\t"<<bib<<std::endl;
             //std::cerr<<"uncertain_barcode(if-1<barcode-read-pair<=5))\t"<<bib-biv<<std::endl;
