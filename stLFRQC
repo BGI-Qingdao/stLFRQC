@@ -229,24 +229,25 @@ echo "INFO : --> remove 00.sam ..."
 rm -rf $TEMP_PREFIX".00.sam" || exit 1
 
 echo "INFO : --> run samtools sort now ..."
-$SAMTOOLS sort -@ $CPU -o $TEMP_PREFIX".01.fixmate.sort.sam" \
+$SAMTOOLS sort -@ $CPU -o $TEMP_PREFIX".01.fixmate.sort.bam" \
                                   $TEMP_PREFIX".01.fixmate.sam"\
+                                  --output-fmt 'bam' \
                                   2>$TEMP_PREFIX".log.01.samtools_sort" || exit 1
 echo "INFO : --> run samtools sort done."
 echo "INFO : --> remove 01.fixmate.sam ..."
 rm -rf $TEMP_PREFIX".01.fixmate.sam" || exit 1
 
 echo "INFO : --> run samtools markdup now ..."
-$SAMTOOLS markdup -s  $TEMP_PREFIX".01.fixmate.sort.sam" \
-                                  $TEMP_PREFIX".01.fixmate.sort.markdup.sam" \
+$SAMTOOLS markdup -s  $TEMP_PREFIX".01.fixmate.sort.bam" \
+                                  $TEMP_PREFIX".01.fixmate.sort.markdup.bam" \
                                   2>$TEMP_PREFIX".01.rmdup.stats" || exit 1
 echo "INFO : --> run samtools markdup done"
 echo "INFO : --> remove 01.fixmate.sort.sam ..."
-rm -rf $TEMP_PREFIX".01.fixmate.sort.sam" || exit 1
+rm -rf $TEMP_PREFIX".01.fixmate.sort.bam" || exit 1
 
 # step 02 : stats basic metrics by "samtools stats"
 echo "INFO : --> run samtools stats now ..."
-$SAMTOOLS stats -@ $CPU $TEMP_PREFIX".01.fixmate.sort.markdup.sam" \
+$SAMTOOLS stats -@ $CPU $TEMP_PREFIX".01.fixmate.sort.markdup.bam" \
                                   >"02.sam.stats" \
                                   2>"02.sam.stats.log" || exit 1 
 echo "INFO : --> run samtools stats done."
@@ -260,7 +261,7 @@ grep ^ID 02.sam.stats | awk '{print $2,$3,$4}' >>"02.ngs.indel.txt"
 echo "INFO : --> print indel done."
 echo "INFO : --> run samtools depth now ..."
 # step 03 : calculate & draw depth infomation
-$SAMTOOLS depth -a $TEMP_PREFIX".01.fixmate.sort.markdup.sam" \
+$SAMTOOLS depth -a $TEMP_PREFIX".01.fixmate.sort.markdup.bam" \
             | awk '{tB[$3]=tB[$3]+1} END{for(k in tB){print k,tB[k];}}' \
             | sort -n > "03.depth.txt"  || exit 1
 echo "INFO : --> run samtools depth done."
@@ -273,7 +274,7 @@ echo "INFO : stage 2 LFR analysising ....."
 # filter unmaped / duplicate / unbarcoded infomation
 # output format : read_name	barcode_name	ref_name	map_pos
 echo "INFO : --> get read_barcode.pos ..."
-grep -v '^@' $TEMP_PREFIX".01.fixmate.sort.markdup.sam" | \
+$SAMTOOLS view $TEMP_PREFIX".01.fixmate.sort.markdup.bam" |  grep -v '^@'  | \
     awk -F '#|\t' -f $EAWK >$TEMP_PREFIX".04.read_barcode.pos"
 echo "INFO : --> get read_barcode.pos done."
 #step 05 : run lfr analysising ...
