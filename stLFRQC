@@ -34,7 +34,7 @@ Options  :
         --read2           read2
         --gap_threshold   max gap distance to treat as same lfr
                           default 3000,000
-        --cpu             thread for bwa & samtools
+        --thread         thread for bwa & samtools
                           default 8
         --valid_lfr_rp    min valid lfr read pair 
                           default 3
